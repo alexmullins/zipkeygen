@@ -1,6 +1,6 @@
  Program tests the key derivation of golang packages and compares the results
  to those of Dr. Brian Gladman's WinZip AES crypto functions.
- His website is at: http:www.gladman.me.uk/cryptography_technology/fileencrypt/
+ His website is at: http://www.gladman.me.uk/cryptography_technology/fileencrypt/
 
  WinZip AES specifies
   1. Encrpytion-Decryption w/ AES-CTR (128, 192, 256)
@@ -21,3 +21,15 @@
       a. AES 128 = 16 + 16 + 2 = 34 bytes of key material
       b. AES 192 = 24 + 24 + 2 = 50 bytes of key material
       c. AES 256 = 32 + 32 + 2 = 66 bytes of key material
+
+
+Results:
+    Test 1
+    Expected first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+    Actual first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+    Match: true
+
+    Test 2
+    Expected first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+    Actual first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+    Match: true

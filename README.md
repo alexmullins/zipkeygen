@@ -5,7 +5,7 @@
  WinZip AES specifies
   1. Encrpytion-Decryption w/ AES-CTR (128, 192, or 256 bits)
   2. Key generation with PBKDF2-HMAC-SHA1 (1000 iteration count) that
-generates a 160 bit key broken into the following:
+generates a key broken into the following:
         a. First m bytes is for the encryption key
         b. Next n bytes is for the authentication key
         c. Last 2 bytes is the password verification value.

@@ -17,7 +17,7 @@ generates a key broken into the following:
         256bit(32bytes) | 16 bytes
   4. Authentication Key is same size as AES key.
   5. Authentication with HMAC-SHA1-80 (truncated to 80bits).
-  6. Total key size for PBKDF2 is AES Key Size + Auth Key Size + 2 bytes
+  6. KeyLen input into PBKDF2: AES Key Size + Auth Key Size + 2 bytes (pw verify)
         a. AES 128 = 16 + 16 + 2 = 34 bytes of key material
         b. AES 192 = 24 + 24 + 2 = 50 bytes of key material
         c. AES 256 = 32 + 32 + 2 = 66 bytes of key material
@@ -31,6 +31,6 @@ Results:
     Match: true
 
     Test 2
-    Expected first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
-    Actual first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+    Expected first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
+    Actual first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
     Match: true

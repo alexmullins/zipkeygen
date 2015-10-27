@@ -69,4 +69,15 @@ func main() {
 		fmt.Printf("Actual first %d bytes: %x\n", testLen, key[:testLen])
 		fmt.Printf("Match: %v\n\n", bytes.Equal(tests[i].firstKeyBytes, key[:testLen]))
 	}
+
+	// Example keys used for AES-128.
+	t := tests[1]
+	key := pbkdf2.Key(t.password, t.salt, t.iterations, 34, sha1.New)
+	ek := key[:16]
+	ak := key[16:32]
+	pv := key[32:34]
+	fmt.Printf("PW->Key: %x\n", key)
+	fmt.Printf("Encryption key: %x\n", ek)
+	fmt.Printf("Authentication key: %x\n", ak)
+	fmt.Printf("PW Verify Code: %x\n", pv)
 }

@@ -25,17 +25,18 @@ generates a key broken into the following:
   in the .zip file
 
 Results:
-    Test 1
-    Expected first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
-    Actual first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
-    Match: true
 
-    Test 2
-    Expected first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
-    Actual first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
-    Match: true
+Test 1
+Expected first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+Actual first 16 bytes: 5c75cef01a960df74cb6b49b9e38e6b5
+Match: true
 
-    PW->Key: d1daa78615f287e6a1c8b120d7062a493f98d203e6be49a6adf4fa574b6e64eedf37
-    Encryption key: d1daa78615f287e6a1c8b120d7062a49
-    Authentication key: 3f98d203e6be49a6adf4fa574b6e64ee
-    PW Verify Code: df37
+Test 2
+Expected first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
+Actual first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
+Match: true
+
+PW->Key: d1daa78615f287e6a1c8b120d7062a493f98d203e6be49a6adf4fa574b6e64eedf37
+Encryption key: d1daa78615f287e6a1c8b120d7062a49
+Authentication key: 3f98d203e6be49a6adf4fa574b6e64ee
+PW Verify Code: df37

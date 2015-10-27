@@ -12,7 +12,7 @@ import (
 )
 
 // WinZip AES specifies
-//  1. Encrpytion-Decryption w/ AES-CTR (128, 192, 256)
+//  1. Encryption-Decryption w/ AES-CTR (128, 192, or 256bits)
 //  2. KeyGen with PBKDF2-HMAC-SHA1 (1000 iteration count):
 //      a. First m bytes is for the encryption key
 //      b. Next n bytes is for the authentication key

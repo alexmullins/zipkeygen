@@ -62,4 +62,4 @@ Authentication passed.
 IV: 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 IVint: 1
 Decryption succeeded.
-Plaintext: Hello World
+Plaintext: "Hello World\r\n"

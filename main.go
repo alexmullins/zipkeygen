@@ -77,11 +77,12 @@ func main() {
 
 	// Example keys used for AES-128.
 	t := tests[1]
-	key := pbkdf2.Key(t.password, t.salt, 1000, 34, sha1.New)
-	ek := key[:16]
-	ak := key[16:32]
-	pv := key[32:34]
-	fmt.Printf("PW->Key: %x\n", key)
+	ek, ak, pv := GenerateKeys(t.password, t.salt, AES_128)
+	var key bytes.Buffer
+	key.Write(ek)
+	key.Write(ak)
+	key.Write(pv)
+	fmt.Printf("PW->Key: %x\n", key.Bytes())
 	fmt.Printf("Encryption key: %x\n", ek)
 	fmt.Printf("Authentication key: %x\n", ak)
 	fmt.Printf("PW Verify Code: %x\n\n", pv)
@@ -150,7 +151,7 @@ func main() {
 	} else {
 		fmt.Printf("Decryption succeeded.\n")
 	}
-	fmt.Printf("Plaintext: %s\n", p)
+	fmt.Printf("Plaintext: %q\n", p)
 }
 
 // Key sizes for the auth and enc keys.

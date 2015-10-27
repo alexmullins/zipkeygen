@@ -36,7 +36,30 @@ Expected first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
 Actual first 16 bytes: d1daa78615f287e6a1c8b120d7062a49
 Match: true
 
-PW->Key: d1daa78615f287e6a1c8b120d7062a493f98d203e6be49a6adf4fa574b6e64eedf37
-Encryption key: d1daa78615f287e6a1c8b120d7062a49
-Authentication key: 3f98d203e6be49a6adf4fa574b6e64ee
-PW Verify Code: df37
+PW->Key: 142f8fafce633ccd9265d90fc8fe425257dcb1a5d1f5cc961ffef716b20ea60d1296
+Encryption key: 142f8fafce633ccd9265d90fc8fe4252
+Authentication key: 57dcb1a5d1f5cc961ffef716b20ea60d
+PW Verify Code: 1296
+
+Encryption key: 142f8fafce633ccd9265d90fc8fe425257dcb1a5d1f5cc961ffef716b20ea60d
+Authentication key: 1296ebadec5f39ba8a19b30a5cb1136c190bf2bfddef54f75440a3df78c56f8f
+PW Verify Code: 23be
+len(enc)+len(auth)+len(pwv)=66
+
+Testing decryption of zip.
+Raw Encrypted Zip Data
+Salt: 0989b46306bd8f8293a389613db826d1
+PWV: a3e6
+Data: e0ba876cd116a6df91cf7f8a14
+AuthCode: b89f23e399cb17d5651a
+
+Encryption key: 8d11d79d63e5d18904ae6acb77cfed5579912f8bc321063ba9d607f709af372a
+Auth Key: 6fa064bf1816d83a802855a4e812286f9f47c60698fe61fe4ba12a0b759520ee
+PWV Code: a3e6
+
+Password verification passed.
+Authentication passed.
+IV: 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+IVint: 1
+Decryption succeeded.
+Plaintext: Hello World

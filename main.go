@@ -5,7 +5,11 @@ package main
 
 import (
 	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/sha1"
+	"encoding/binary"
 	"fmt"
 
 	"golang.org/x/crypto/pbkdf2"
@@ -25,7 +29,7 @@ import (
 //      256bit(32bytes) | 16 bytes
 //
 //  4. Authentication Key is same size as AES key.
-//  5. Authentication with HMAC-SHA1-80 (truncated to 80bits).
+//  5. Authentication with HMAC-SHA1-80 (truncated to 80bits/10bytes).
 //  6. Total key size for PBKDF2 is AES Key Size + Auth Key Size + 2 bytes
 //      a. AES 128 = 16 + 16 + 2 = 34 bytes of key material
 //      b. AES 192 = 24 + 24 + 2 = 50 bytes of key material
@@ -42,6 +46,7 @@ type test struct {
 }
 
 func main() {
+	// Test cases from Dr. Gladman's website.
 	tests := []test{
 		{
 			password:   []byte("password"),
@@ -72,12 +77,119 @@ func main() {
 
 	// Example keys used for AES-128.
 	t := tests[1]
-	key := pbkdf2.Key(t.password, t.salt, t.iterations, 34, sha1.New)
+	key := pbkdf2.Key(t.password, t.salt, 1000, 34, sha1.New)
 	ek := key[:16]
 	ak := key[16:32]
 	pv := key[32:34]
 	fmt.Printf("PW->Key: %x\n", key)
 	fmt.Printf("Encryption key: %x\n", ek)
 	fmt.Printf("Authentication key: %x\n", ak)
-	fmt.Printf("PW Verify Code: %x\n", pv)
+	fmt.Printf("PW Verify Code: %x\n\n", pv)
+
+	// Example keys used for AES-256
+	enc, auth, pwv := GenerateKeys(t.password, t.salt, AES_256)
+	fmt.Printf("Encryption key: %x\n", enc)
+	fmt.Printf("Authentication key: %x\n", auth)
+	fmt.Printf("PW Verify Code: %x\n", pwv)
+	fmt.Printf("len(enc)+len(auth)+len(pwv)=%d\n", len(enc)+len(auth)+len(pwv))
+
+	// This is the encrypted file data segment from hello.zip
+	data := []byte{0x09, 0x89, 0xB4, 0x63, 0x06, 0xBD, 0x8F, 0x82, 0x93,
+		0xA3, 0x89, 0x61, 0x3D, 0xB8, 0x26, 0xD1, 0xA3, 0xE6, 0xE0, 0xBA,
+		0x87, 0x6C, 0xD1, 0x16, 0xA6, 0xDF, 0x91, 0xCF, 0x7F, 0x8A, 0x14,
+		0xB8, 0x9F, 0x23, 0xE3, 0x99, 0xCB, 0x17, 0xD5, 0x65, 0x1A,
+	}
+
+	salt := data[:16]
+	pv = data[16:18]
+	d := data[18:31]
+	acode := data[31:]
+	fmt.Printf("\nTesting decryption of zip.\n")
+	fmt.Printf("Raw Encrypted Zip Data\n")
+	fmt.Printf("Salt: %x\n", salt)
+	fmt.Printf("PWV: %x\n", pv)
+	fmt.Printf("Data: %x\n", d)
+	fmt.Printf("AuthCode: %x\n\n", acode)
+
+	// Generate Keys
+	enc, auth, pwv = GenerateKeys([]byte("golang"), salt, AES_256)
+	fmt.Printf("Encryption key: %x\n", enc)
+	fmt.Printf("Auth Key: %x\n", auth)
+	fmt.Printf("PWV Code: %x\n\n", pwv)
+
+	// Check password verification code
+	if !bytes.Equal(pv, pwv) {
+		fmt.Printf("Password verification failed.\n")
+		return
+	} else {
+		fmt.Printf("Password verification passed.\n")
+	}
+
+	// Check authentication code
+	if !CheckMAC(d, acode, auth) {
+		fmt.Printf("Authentication failed.\n")
+		return
+	} else {
+		fmt.Printf("Authentication passed.\n")
+	}
+
+	// Finally decrypt
+	p := make([]byte, len(d))
+	iv := make([]byte, aes.BlockSize)
+	iv[0] = 1 // IV starts at 1 not 0. WHY?!?!? Everything I've read says its starts at 0
+	fmt.Printf("IV: % x\n", iv)
+
+	var n int32
+	buf := bytes.NewReader(iv)
+	binary.Read(buf, binary.LittleEndian, &n)
+	fmt.Printf("IVint: %d\n", n)
+
+	if !Decrypt(d, p, enc, iv) {
+		fmt.Printf("Decryption failed.\n")
+		return
+	} else {
+		fmt.Printf("Decryption succeeded.\n")
+	}
+	fmt.Printf("Plaintext: %s\n", p)
+}
+
+// Key sizes for the auth and enc keys.
+const (
+	AES_128 = 16
+	AES_192 = 24
+	AES_256 = 32
+)
+
+const (
+	iterationCount = 1000
+)
+
+// GenerateKeys will create an auth key, encryption key, and pw verification code
+// from the password and salt.
+func GenerateKeys(password, salt []byte, keySize int) (enc, auth, pv []byte) {
+	totalSize := (keySize * 2) + 2 // enc + auth + pv sizes
+
+	key := pbkdf2.Key(password, salt, iterationCount, totalSize, sha1.New)
+	enc = key[:keySize]
+	auth = key[keySize : keySize*2]
+	pv = key[keySize*2:]
+	return
+}
+
+func CheckMAC(message, messageMAC, key []byte) bool {
+	mac := hmac.New(sha1.New, key)
+	mac.Write(message)
+	expectedMAC := mac.Sum(nil)
+	expectedMAC = expectedMAC[:10]
+	return bytes.Equal(messageMAC, expectedMAC)
+}
+
+func Decrypt(ciphertext, plaintext, key, iv []byte) bool {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return false
+	}
+	stream := cipher.NewCTR(block, iv)
+	stream.XORKeyStream(plaintext, ciphertext)
+	return true
 }
